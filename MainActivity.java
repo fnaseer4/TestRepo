@@ -20,7 +20,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity  implements Callback<StackOverFlowQuestions> {
+public class MainActivity extends AppCompatActivity{
     Toolbar toolbar;
     ProgressDialog progressDialog=null;
     public static final String Base_Url = "https://api.stackexchange.com/";
@@ -52,7 +52,20 @@ public class MainActivity extends AppCompatActivity  implements Callback<StackOv
         // call.cancel();
         // calls can only be used once but you can easily clone them
         //Call<StackOverflowQuestions> c = call.clone();
-        call.enqueue(this);
+        call.enqueue(new Callback<StackOverFlowQuestions>() {
+            @Override
+            public void onResponse(Call<StackOverFlowQuestions> call, Response<StackOverFlowQuestions> response) {
+                TextView resBox = (TextView) findViewById(R.id.result_text);
+                String  res = response.body().has_more;
+                resBox.setText(res);
+            }
+
+            @Override
+            public void onFailure(Call<StackOverFlowQuestions> call, Throwable t) {
+                Toast.makeText(MainActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
 
     }
@@ -63,25 +76,25 @@ public class MainActivity extends AppCompatActivity  implements Callback<StackOv
         return super.onPrepareOptionsMenu(menu);
     }
 
-    @Override
-    public void onResponse(Call<StackOverFlowQuestions> call, Response<StackOverFlowQuestions> response) {
-       // String msg = " Message: "+response.message()+" Body : "+response.body().items;
-        TextView resBox = (TextView) findViewById(R.id.result_text);
-        String res="";
-//        for( int i=0;i<response.body().items.size();i++){
-//            res=res+response.body().items.get(i).title+"\n\n";
-//        }
-
-        res = response.body().has_more;
-       resBox.setText(res);
-
-        //Log.i("RETERO TEST :",msg);
-
-    }
-
-    @Override
-    public void onFailure(Call<StackOverFlowQuestions> call, Throwable t) {
-        Toast.makeText(MainActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-    }
+//    @Override
+//    public void onResponse(Call<StackOverFlowQuestions> call, Response<StackOverFlowQuestions> response) {
+//       // String msg = " Message: "+response.message()+" Body : "+response.body().items;
+//        TextView resBox = (TextView) findViewById(R.id.result_text);
+//        String res="";
+////        for( int i=0;i<response.body().items.size();i++){
+////            res=res+response.body().items.get(i).title+"\n\n";
+////        }
+//
+//        res = response.body().has_more;
+//       resBox.setText(res);
+//
+//        //Log.i("RETERO TEST :",msg);
+//
+//    }
+//
+//    @Override
+//    public void onFailure(Call<StackOverFlowQuestions> call, Throwable t) {
+//        Toast.makeText(MainActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+//    }
 
 }
